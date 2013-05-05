@@ -49,7 +49,7 @@ type_to_fields = {
 
     #New ones
     "photos" : ["from","source","created_time","tags","comments.fields(message,id,from)","likes.fields(pic_square,name)"],
-    "videos" : ["from","link","picture","name", "description","likes.fields(pic_square,name)","comments.fields(message,id,from)","created_time", "source"],
+    "videos" : ["from","link","picture","name", "description","likes.fields(pic_square,name)","comments.fields(message,id,from)","created_time", "source", "tags"],
     "links" : ["from", "message","picture","link","created_time","comments.fields(from,message)","description",],
     "albums" : ["photos.fields(id)","id","count","created_time","likes.fields(pic_square,name)","comments", "name", "cover_photo", "place", "from",],
 }

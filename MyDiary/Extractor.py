@@ -40,3 +40,12 @@ class Extractor(facebook.GraphAPI):
         threads_query = "SELECT thread_id FROM thread WHERE folder_id = 0 OR folder_id = 1 OR folder_id = 2 OR folder_id = 3 OR folder_id = 4 AND updated_time < " + str(untill) + "and updated_time > " + str(since)
         threads = self.fql(threads_query)
         return [Fb_Thread(self, str(thread["thread_id"])) for thread in threads]
+
+    def videos(self, since=int(back_dates(time.time(), days = 30)), untill=int(time.time()), limit = 25):
+        from Video import Video
+        my_videos_q = "SELECT vid FROM video WHERE owner = me() and created_time < " + str(untill) + "and created_time > " + str(since)
+        tagged_videos_q = "SELECT vid FROM video_tag WHERE subject = me() and created_time < " + str(untill) + "and created_time > " + str(since)
+        my_videos = self.fql(my_videos_q)
+        tagged_videos = self.fql(tagged_videos_q)
+        all_video = my_videos + tagged_videos
+        return [Video(self, str(video["vid"])) for video in all_video]
