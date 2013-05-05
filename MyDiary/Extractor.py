@@ -34,3 +34,9 @@ class Extractor(facebook.GraphAPI):
         status_query = "SELECT status_id FROM status WHERE uid = me() and time < " + str(untill) + "and time > " + str(since)
         status = self.fql(status_query)
         return [Status(self, str(statu["status_id"])) for statu in status]
+
+    def thread(self, since=int(back_dates(time.time(), days = 30)), untill=int(time.time()), limit = 25):
+        from Fb_Thread import Fb_Thread
+        threads_query = "SELECT thread_id FROM thread WHERE folder_id = 0 OR folder_id = 1 OR folder_id = 2 OR folder_id = 3 OR folder_id = 4 AND updated_time < " + str(untill) + "and updated_time > " + str(since)
+        threads = self.fql(threads_query)
+        return [Fb_Thread(self, str(thread["thread_id"])) for thread in threads]
