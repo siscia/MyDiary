@@ -18,10 +18,12 @@ class Status(FacebookObject):
 
     def analyze_tag(self):
         "Analyze the tag and put picture on it"
-        self.all_from_paging("tags")
-        for tag in self["tags"]:
-            self.analyze_from(tag)
-        return self["tags"]
+        if "tags" in self:
+            self.all_from_paging("tags")
+            for tag in self["tags"]:
+                self.analyze_from(tag)
+            return self["tags"]
+        return
 
     def analyze(self):
         "Analyze the data returning what I need"
