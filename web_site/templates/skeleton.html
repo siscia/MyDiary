@@ -1,0 +1,15 @@
+{% import 'status.html' as status %}
+
+<head>
+</head>
+<body>
+{% for object in data %}
+       {{object}}
+       <br>
+   {% if object["class"] == "status" %}
+       {{status.status(object)}}
+   {% elif object["class"] == "link" %}
+       {{status.links(object)}}
+   {% endif %}
+{% endfor %}
+</body>

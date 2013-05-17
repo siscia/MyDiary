@@ -1,0 +1,54 @@
+{% macro likes(object) %}
+ <div class="likes">
+  {% if object["likes"]%}
+    <p> It liked to: </p>
+    <ul>
+    {% for like in object["likes"]%}
+      <img src={{like["pic_square"]["url"]}}>
+      <li> {{like["name"]}} </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+ </div>
+{% endmacro %}
+
+{% macro comments(object) %}
+ <div class="comments">
+  {% if object["comments"] %}
+     <p> Comments: </p>
+     <ul>
+     {% for comment in object["comments"] %}
+       <img src={{comment["from"]["pic_square"]["url"]}}>
+       <li> {{comment["from"]["name"]}}: {{comment["message"]}} </li>
+     {% endfor %}
+     </ul>
+  {% endif %}
+ </div>
+{% endmacro %}
+
+
+{% macro status(status) %}
+ <div class="status">
+  <p> {{status["class"]}} </p>
+  <p> You wrote: {{status["message"]}} </p>
+  {{likes(status)}}
+  {{comments(status)}}
+ </div>
+{% endmacro %}
+
+{% macro links(link) %}
+ <div class="link">
+ <p> {{link}} </p>
+ {% if link["message"] %}
+   <p> {{link["message"]}} </p>
+ {% endif %}
+ {% if link["description"] %}
+   <p> {{link["description"]}} </p>
+ {% endif %}
+ {% if link["thumbnail"]%}
+   <img src={{link["thumbnail"]["url"]}}>
+ {% endif %}
+ {{likes(link)}}
+ {{comments(link)}}
+ </div>
+{% endmacro %}

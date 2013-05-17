@@ -1,0 +1,13 @@
+<body>
+{% for status in data %}
+    {{status}}
+    <p> You wrote: {{status["message"]}} </p>
+    {% if status["likes"]%}
+        <p>And it liked to: </p>
+	{% for like in status["likes"] %}
+	<p> {{like["name"]}} </p>
+	<img src={{like["pic_square"].name}}>
+	{% endfor %}
+    {% endif %}
+{% endfor %}
+</body>
