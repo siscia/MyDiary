@@ -1,6 +1,6 @@
 
 from basic_class import FacebookObject
-from util import open_image, type_to_fields
+from util import open_image, type_to_fields, get_user
 
 class Photo(FacebookObject):
     def __init__(self, fb, id, kwargs={}):
@@ -13,6 +13,7 @@ class Photo(FacebookObject):
 
     def get_data(self):
         self.get_field(type_to_fields["photos"])
+        self.update({"from" : get_user(self.fb, self["from"]["id"])})
         return self
             
     def get_photo(self):

@@ -22,6 +22,7 @@ class Album(FacebookObject):
         return self["photos"]
 
     def analyze(self):
+        self["cover_photo"] = Photo(self.fb, self["cover_photo"]).analyze()
         self.analyze_single_picture()
         self.get_all_likes_comments()
         self.image_from_connection()

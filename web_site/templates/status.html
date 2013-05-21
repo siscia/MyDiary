@@ -52,3 +52,17 @@
  {{comments(link)}}
  </div>
 {% endmacro %}
+
+{% macro fb_thread(thread) %}
+ <div class="fb_thread">
+ {% if thread["message"] and thread["from"] %}
+   <p> {{thread["from"]["name"]}} started the conversation: </p>
+   <img src={{thread["from"]["pic_square"]}}
+   <p> {{thread["message"]}} </p>
+   {% for message in thread["comments"] %}
+     <img src={{message["author"]["pic_square"]["url"]}}
+     <p>{{message["author"]["name"]}}: {{message["body"]}} </p>
+   {% endfor %}
+ {% endif %}
+ </div>
+{% endmacro %}

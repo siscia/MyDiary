@@ -19,6 +19,22 @@ class ImageFacebook(object):
             self.images[url]= get_file_image(url)
         return {"url" : url, "image" : self.images[url]}
 
+def get_user_info(fb, uid):
+    user = fb.fql("select uid, name, pic_square from user where uid = " + str(uid))[0]
+    if user["pic_square"]:
+        user["pic_square"] = open_image(user["pic_square"])
+        return user
+    user["pic_square"] = open_image("https://fbstatic-a.akamaihd.net/rsrc.php/v2/y_/r/9myDd8iyu0B.gif")
+    return user
+    
+class UserFacebook(object):
+    def __init__(self):
+        self.uids = {}
+
+    def add_get_user(self, fb, uid):
+        if not uid in self.uids.keys():
+            self.uids[uid]= get_user_info(fb, uid)
+        return self.uids[uid]
         
 def simple_request(path):
     """Fetches the given path in the Graph API.
@@ -79,6 +95,10 @@ image = ImageFacebook()
 
 def open_image(url):
     return image.add_get_image(url)
+
+users = UserFacebook()
+def get_user(fb, uid):
+    return users.add_get_user(fb, uid)
     
 
 def get_pic_from_uid(fb, uid, dimension = "pic_square"):

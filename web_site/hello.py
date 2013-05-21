@@ -12,14 +12,20 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return render_template("skeleton.html", data=[])
 
 @app.route("/<key>/")
 def show(key):
     q = extractor.Extractor(key)
-    status = q.links()
-    status = [s.analyze() for s in status]
-    return render_template("skeleton.html", data=status) 
+    status = q.status()
+    photo = q.photos()
+    #albums = q.albums(since=1356962300)
+    link = q.links()
+    all = status + photo + link #+albums
+    all.sort(reverse=True)
+    for x in all:
+        x.analyze()
+    return render_template("skeleton.html", data=all)
     
 
 if __name__ == '__main__':

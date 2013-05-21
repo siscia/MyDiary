@@ -1,15 +1,25 @@
-{% import 'status.html' as status %}
+{% import 'macro.html' as macro %}
 
 <head>
+<link rel="stylesheet" media="screen" href={{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}>
 </head>
 <body>
+<p> Prova, prova </p>
 {% for object in data %}
-       {{object}}
        <br>
    {% if object["class"] == "status" %}
-       {{status.status(object)}}
+       {{macro.status(object)}}
    {% elif object["class"] == "link" %}
-       {{status.links(object)}}
+       {{macro.links(object)}}
+   {% elif object["class"] == "fb_thread" %}
+       {{macro.fb_thread(object)}}
+   {% elif object["class"] == "photo" %}
+       {{macro.photos(object)}}
+   {% elif object["class"] == "friendship" %}
+       {{macro.friendship(object)}}
+   {% elif object["class"] == "album" %}
+       <h1> Album </h1>
+       {{macro.albums(object)}}
    {% endif %}
 {% endfor %}
 </body>
