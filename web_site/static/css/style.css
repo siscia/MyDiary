@@ -1,0 +1,31 @@
+body {
+    background-color : white;
+    color : black;
+}
+
+/*.status{
+    overflow : hidden; 
+    background-color : aqua;
+    padding : 25px;
+    width : 80%;
+    clear : both;
+}*/
+
+.own-message{
+    float : left;
+    width : 70%;
+}
+
+.likes{
+    float : right;
+    width : 30%;
+}
+
+.likes ul {
+    list-style-type : none;
+}
+
+.comments {
+    float : left;
+    width : 70%;
+}

@@ -1,0 +1,144 @@
+{% macro likes(object) %}
+ <div class="span3">
+  {% if object["likes"]%}
+    <p> It liked to: </p>
+    <ul class="media-list">
+    {% for like in object["likes"]%}
+      <li class="media">
+        <div class="pull-left">
+         <img class="media-object" src={{like["pic_square"]["url"]}}>
+        </div>
+        <div class="media-body">
+          {{like["name"]}}
+        </div>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+ </div>
+{% endmacro %}
+
+{% macro comments(object) %}
+ <div class="span9">
+  {% if object["comments"] %}
+     <p> Comments: </p>
+     <ul class="media-list">
+     {% for comment in object["comments"] %}
+       <li class="media">
+         <div class="pull-left">
+           <img class="media-object" src={{comment["from"]["pic_square"]["url"]}}>
+         </div>
+         <div class="media-body">
+           <h4 class="media-heading">{{comment["from"]["name"]}} </h4>
+           {{comment["message"]}}
+         </div>
+       </li>
+     {% endfor %}
+     </ul>
+  {% endif %}
+ </div>
+{% endmacro %}
+
+
+{% macro status(status) %}
+ <div class="container-fluid well status">
+  <div class="row-fluid">
+   <div class="span9">
+    <p class="own-message"> {{status["message"]}} </p>
+    {{comments(status)}}
+   </div>
+    {{likes(status)}}
+  </div>
+ </div>
+{% endmacro %}
+
+{% macro links(link) %}
+ <div class="container-fluid well link">
+  <div class="row-fluid">
+   <div class="span9">
+    <div class="media">
+     {% if link["thumbnail"]%}
+      <div class="pull-left">
+        <img src={{link["thumbnail"]["url"]}}>
+      </div>
+     {% endif %}
+      <div class="media-body">
+        {% if link["message"] %}
+         <p> {{link["message"]}} </p>
+        {% endif %}
+        {% if link["description"] %}
+         <p> {{link["description"]}} </p>
+        {% endif %}
+      </div>
+    </div>
+    {{comments(link)}}
+   </div>
+    {{likes(link)}}
+  </div>
+ </div>
+{% endmacro %}
+
+{% macro photos(photo) %}
+ <div class="container-fluid well photo">
+  <div class="row-fluid">
+   <div class="span9">
+    <div class="media">
+     <div class="pull-left">
+      <img class="media-object" src={{photo["picture"]["url"]}}>
+     </div>
+     <div class="media-body">
+      By <h4 class="media-heading">{{photo["from"]["name"]}}</h4>
+     </div>
+    </div>
+   {{comments(photo)}}
+   </div>
+   {{likes(photo)}}
+   <div class="span3"
+    {% if photo["tags"] %}
+     <p> Tagged: </p>
+     {% for person in photo["tags"] %}
+      <div class="media">
+       <div class="pull-left">
+        <img class="media-object" src={{person["pic_square"]["url"]}}>
+       </div>
+       <div class="media-body">
+	 <h4 class="media-heading">{{person["name"]}} </h4>
+       </div>      
+      </div>
+     {% endfor %}
+    {% endif %}
+    </div>
+   </div>
+  </div>
+ </div>
+{% endmacro %}
+
+{% macro albums(album) %}
+ <div class="album">
+ <p>Your album: {{album["name"]}}</p>
+ {% if album["cover_photo"] %}
+   <img src={{album["cover_photo"]["source"]}}>
+ {% endif %}
+ {{likes(album)}}
+ {{comments(album)}}
+ {% if album["photos"] %}
+   {% for photo in album["photos"] %}
+      {{photos(photo)}}
+   {% endfor %}
+ {% endif %}
+ </div>
+{% endmacro %}
+
+{% macro fb_thread(thread) %}
+ <div class="fb_thread">
+ {% if thread["message"] and thread["from"] %}
+   <p> {{thread["from"]["name"]}} started the conversation: </p>
+   <img src={{thread["from"]["pic_square"]}}
+   <p> {{thread["message"]}} </p>
+   {% for message in thread["comments"] %}
+     <img src={{message["author"]["pic_square"]["url"]}}
+     <p>{{message["author"]["name"]}}: {{message["body"]}} </p>
+   {% endfor %}
+ {% endif %}
+ </div>
+{% endmacro %}
