@@ -130,16 +130,59 @@
  </div>
 {% endmacro %}
 
+{% macro fb_threadA(thread) %}
+ <div class="cointainer-fluid well fb_thread">
+  <div class="row-fluid">
+   <div class="span8 offset2">
+    {% for message in thread["comments"]["data"] %}
+      {{message["message"]}}
+    <br>
+    {% endfor %}
+   </div>
+  </div>
+ </div>
+{% endmacro %}
+
+
 {% macro fb_thread(thread) %}
- <div class="fb_thread">
- {% if thread["message"] and thread["from"] %}
-   <p> {{thread["from"]["name"]}} started the conversation: </p>
-   <img src={{thread["from"]["pic_square"]}}
-   <p> {{thread["message"]}} </p>
-   {% for message in thread["comments"] %}
-     <img src={{message["author"]["pic_square"]["url"]}}
-     <p>{{message["author"]["name"]}}: {{message["body"]}} </p>
-   {% endfor %}
- {% endif %}
+ <div class="cointainer-fluid well fb_thread">
+  <div class="row-fluid">
+   <div class="span8 offset2">
+<p>thread_id = {{thread["id"]}} </p>
+    {% set leftright = cycler("pull-left", "pull-right")%}
+    {% for message in thread["comments"]["data"] %}
+
+      {% if loop.first %}
+       <div class="media well">
+        <p>message_id = {{message["id"]}} </p>
+        <div class={{leftright.next()}}>
+         <img class="media-object" src={{message["author"]["pic_square"]["url"]}}>
+        </div>
+        <div class="media-body">
+         <p> {{message["message"]}} </p>
+
+      {% elif message["author_id"] == thread["comments"]["data"][loop.index0 - 1]["author_id"] %}
+         <p> {{message["message"]}} </p>
+
+      {% else %}
+       </div>
+        </div>
+       <div class="media well">
+	 <p>message_id = {{message["id"]}} </p>
+        <div class={{leftright.next()}}>
+         <img class="media-object" src={{message["author"]["pic_square"]["url"]}}>
+        </div>
+        <div class="media-body">
+         <p> {{message["message"]}} </p>
+
+       {% endif %}
+     {% endfor %}
+       </div>
+      </div>
+    </div>
+   </div>
+ </div>
+   </div>
+  </div>
  </div>
 {% endmacro %}

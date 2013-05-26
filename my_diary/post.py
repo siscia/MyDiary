@@ -1,63 +1,27 @@
 from basic_class import FacebookObject
 
-from util import type_to_fields
+from video import Video
+from link import Link
+from album import Album
+from photo import Photo
+from status import Status
 
 class Post(FacebookObject):
-    def __init__(self, fb, kwargs):
-        if "id" in kwargs and "type" in kwargs:
-            super(Post, self).__init__(fb, kwargs)
-        else:
-            raise Exception("Need id and type at least")
+    def __init__(self, fb, id, type_p, kwargs={}):
+        self.id = id
+        self.fb = fb
+        self.type_p = type_p
 
-    def filter(self):
-        if self["type"] != "status":
-            return True
-        else:
-            if "status_type" not in self:
-                self.get_field("status_type")
-        if "status_type" in self and self["status_type"] == "approved_friend":
-            return True
-        return False
-
-    def analyze_link(self):
-        link = self.get_field(type_to_fields["link"])
-        self.get_image("picture")
-        self.get_all_likes_comments()
-        self.image_from_connection()
-
-    def analyze_video(self):
-        video = self.get_field(type_to_fields["video"])
-        self.get_image("picture")
-        self.get_all_likes_comments()
-        self.image_from_connection()
-
-    def analyze_status(self):
-        status = self.get_field(type_to_fields["status"])
-        print "start analisis of story_tag"
-        self.analyze_story_tags()
-        self.get_all_likes_comments()
-        self.image_from_connection()
-
-    def analyze_swf(self):
-        swf = self.get_field(type_to_fields["swf"])
-        self.get_image("picture")
-        self.get_all_likes_comments()
-        self.image_from_connection()
-
-    def analyze_photo(self):
-        photo = self.get_field(type_to_fields["photo"])
-        source = self.fb.request(photo["object_id"])["source"]
-        self.update({"picture" : source}) #there is already a "picture" the one in the source is bigger, keep this in mind...
-        self.get_image("picture") #that is why i did ^
-        self.get_all_likes_comments()
-        self.image_from_connection()
-
-    def analyze(self):
-        analyzer = {
-            "link" : self.analyze_link,
-            "video" : self.analyze_video,
-            "status" : self.analyze_status,
-            "swf" : self.analyze_swf,
-            "photo" : self.analyze_photo,
+    def get_real(self):
+        possible_types = {
+            "link" : Link,
+            "status" : Status,
+            "photo" : Photo,
+            "video" : Video,
+            "album" : Album,
+            "swf" : Link,            
         }
-        analyzer[self["type"]]()
+        if self.type_p in possible_types:
+            return possible_types[self.type_p](self.fb.copy(), self.id)
+        else:
+            return self.type_p

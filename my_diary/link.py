@@ -40,7 +40,7 @@ class Link(FacebookObject):
             name = self.fb.fql("SELECT name FROM user WHERE uid = " + str(id))[0]["name"]
             return {"pic_square" : pic, "name" : name}
             
-        query = "SELECT user_id FROM like WHERE object_id = " + str(self.id)
+        query = "SELECT user_id FROM like WHERE object_id = \"" + str(self["id"]) + "\""
         likes = self.fb.fql(query)
         #messy too, but same good reason
         self["likes"] = {"data" : [analyze_like(like["user_id"]) for like in likes]}

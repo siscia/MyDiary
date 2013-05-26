@@ -2,7 +2,16 @@ import time
 from datetime import datetime
 
 from basic_class import FacebookObject
-from util import back_dates, get_user
+from util import back_dates, get_user, simple_request
+
+def counter(f):
+    def wrapper(*args):
+        wrapper.count += 1
+        print wrapper.count
+        return f(*args)
+    wrapper.count = 1
+    return wrapper
+    
 
 #I believe it works, better thing to do is to don't touch it at all... 
 
@@ -32,7 +41,8 @@ class Fb_Thread(FacebookObject):
    #     #date -> {"updated_time" : 1251265331}
    #     self.update({"updated_time" : date, "subject" : datas[0]["subject"]})
    #     return date
-        
+
+    @counter
     def get_message(self,  since = int(back_dates(time.time(), days = 10)), untill = int(time.time())):
         query = "SELECT body, author_id, attachment, created_time FROM message WHERE thread_id = " + str(self.id) + " and created_time > " + str(since) + " and created_time < " + str(untill) + " ORDER BY created_time ASC"
         messages = self.fb.fql(query)
@@ -43,15 +53,45 @@ class Fb_Thread(FacebookObject):
         self["comments"] = messages
         return messages
 
+    @counter
     def _get_more_message(self, acc, since, untill):
-        message = acc
-        while len(message) >= 20:
-            query = "SELECT body, created_time, author_id FROM message WHERE thread_id =  " + str(self.id)  +  "  and created_time > " + str(since)  + " and created_time < " + str(message[-1]["created_time"])  + " ORDER BY created_time ASC"
+        messages = acc
+        while len(messages) >= 20:
+            time.sleep(0.01)
+            messages = sorted(messages, key = lambda k: k["created_time"])
+
+            query = "SELECT body, created_time, author_id FROM message WHERE thread_id =  " + str(self.id)  +  "  and created_time > " + str(since)  + " and created_time < " + str(messages[-1]["created_time"])  + " ORDER BY created_time ASC"
+
             messages = self.fb.fql(query)
+            print [x["created_time"] for x in messages]
+
             for message in messages:
                 message["author"] = get_user(self.fb, message["author_id"])
+
             acc.extend(messages)
-        return 0
+        return
+
+    def get_message_new(self,  since = int(back_dates(time.time(), days = 10)), untill = int(time.time())):
+        messages = self.fb.request(str(self.id))
+        for m in messages["comments"]["data"]:
+            m["author"] = get_user(self.fb, m["from"]["id"])
+        while time.mktime(time.strptime(messages["comments"]["data"][-1]["created_time"], "%Y-%m-%dT%H:%M:%S+0000")) > since:
+            to_add = simple_request(messages["comments"]["paging"]["next"])
+            for m in to_add["data"]:
+                m["author"] = get_user(self.fb, m["from"]["id"])
+            messages["comments"]["data"].extend(to_add["data"])
+            if "paging" in to_add:
+                messages["comments"]["paging"] = to_add["paging"]
+            else:
+                self.update(messages)
+                return
+            print "\n"*5
+            print to_add
+            print "\n"*5
+            print messages
+        self.update(messages)
+        return
 
     def analyze(self):
-        self.get_message()
+        self.get_message_new()
+

@@ -17,15 +17,38 @@ def hello_world():
 @app.route("/<key>/")
 def show(key):
     q = extractor.Extractor(key)
-    status = q.status()
-    photo = q.photos()
+    #status = q.status()
+    #photo = q.photos()
     #albums = q.albums(since=1356962300)
-    link = q.links()
-    all = status + photo + link #+albums
+    #link = q.links()
+    
+    #post = q.posts()
+    thread = q.threads()
+
+    #all = post + thread #status + photo + link +post #+albums
+    all = thread[:2]
+    s = set(all)
+    all = list(s)
     all.sort(reverse=True)
     for x in all:
         x.analyze()
     return render_template("skeleton.html", data=all)
+
+    
+t = """
+{% for x in data %}
+  <p>{{x}} {{loop.index0}}</p>
+{% endfor %}
+
+"""
+
+@app.route("/template")
+def show_template():
+    from jinja2 import Environment
+    env = Environment()
+    temp = env.from_string(t) 
+    return temp.render(data = [1, 2, 3])
+
     
 
 if __name__ == '__main__':

@@ -20,8 +20,12 @@ class ImageFacebook(object):
         return {"url" : url, "image" : self.images[url]}
 
 def get_user_info(fb, uid):
-    user = fb.fql("select uid, name, pic_square from user where uid = " + str(uid))[0]
-    if user["pic_square"]:
+    user = fb.fql("select uid, name, pic_square from user where uid = " + str(uid))
+    try:
+        user = user[0]
+    except:
+        user = {}
+    if "pic_square" in user and user["pic_square"]:
         user["pic_square"] = open_image(user["pic_square"])
         return user
     user["pic_square"] = open_image("https://fbstatic-a.akamaihd.net/rsrc.php/v2/y_/r/9myDd8iyu0B.gif")

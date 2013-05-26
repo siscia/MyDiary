@@ -27,6 +27,9 @@ class Status(FacebookObject):
 
     def analyze(self):
         "Analyze the data returning what I need"
+        if self.id != self["id"]:
+            self.get_data()
+            self.id = self["id"]
         self.get_all_likes_comments()
         self.image_from_connection()
         self.analyze_tag()
