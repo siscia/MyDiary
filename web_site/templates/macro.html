@@ -143,46 +143,53 @@
  </div>
 {% endmacro %}
 
+{% set leftright = cycler("pull-left", "pull-right")%}
 
 {% macro fb_thread(thread) %}
  <div class="cointainer-fluid well fb_thread">
   <div class="row-fluid">
    <div class="span8 offset2">
-<p>thread_id = {{thread["id"]}} </p>
-    {% set leftright = cycler("pull-left", "pull-right")%}
+    <div class="media well">
+     <div class={{leftright.next()}}>
+       <img class="media-object" src={{thread["author"]["pic_square"]["url"]}}>
+     </div>
+     <div class="media-body">
+       <p> {{thread["message"]}} </p>
     {% for message in thread["comments"]["data"] %}
 
       {% if loop.first %}
-       <div class="media well">
-        <p>message_id = {{message["id"]}} </p>
-        <div class={{leftright.next()}}>
-         <img class="media-object" src={{message["author"]["pic_square"]["url"]}}>
-        </div>
-        <div class="media-body">
-         <p> {{message["message"]}} </p>
+        {% if message["from"]["id"] == thread["from"]["id"] %}
+          {{sameAuthor(message)}}
+	{% else %}
+          {{newAuthor(message)}}
+        {% endif %} 
 
-      {% elif message["author_id"] == thread["comments"]["data"][loop.index0 - 1]["author_id"] %}
-         <p> {{message["message"]}} </p>
+      {% elif message["from"]["id"] == thread["comments"]["data"][loop.index0 - 1]["from"]["id"] %}
+         {{sameAuthor(message)}}
 
       {% else %}
-       </div>
-        </div>
-       <div class="media well">
-	 <p>message_id = {{message["id"]}} </p>
-        <div class={{leftright.next()}}>
-         <img class="media-object" src={{message["author"]["pic_square"]["url"]}}>
-        </div>
-        <div class="media-body">
-         <p> {{message["message"]}} </p>
-
-       {% endif %}
-     {% endfor %}
-       </div>
+         {{newAuthor(message)}}
+      {% endif %}
+    {% endfor %}
       </div>
+     </div>
     </div>
-   </div>
- </div>
    </div>
   </div>
  </div>
+{% endmacro %}
+
+{% macro sameAuthor(message) %}
+ <p>{{message["message"]}}</p>
+{% endmacro %}
+
+{% macro newAuthor(message) %}
+ </div>
+</div>
+<div class="media well">
+ <div class={{leftright.next()}}>
+  <img class="media-object" src={{message["author"]["pic_square"]["url"]}}>
+ </div>
+ <div class="media-body">
+  <p> {{message["message"]}} </p>
 {% endmacro %}

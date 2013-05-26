@@ -73,23 +73,28 @@ class Fb_Thread(FacebookObject):
 
     def get_message_new(self,  since = int(back_dates(time.time(), days = 10)), untill = int(time.time())):
         messages = self.fb.request(str(self.id))
-        for m in messages["comments"]["data"]:
-            m["author"] = get_user(self.fb, m["from"]["id"])
-        while time.mktime(time.strptime(messages["comments"]["data"][-1]["created_time"], "%Y-%m-%dT%H:%M:%S+0000")) > since:
-            to_add = simple_request(messages["comments"]["paging"]["next"])
-            for m in to_add["data"]:
+        messages["author"] = get_user(self.fb, messages["from"]["id"])
+        messages["to"] = [get_user(self.fb, user["id"]) for user in messages["to"]["data"]]
+        if "comments" in messages:
+            for m in messages["comments"]["data"]:
                 m["author"] = get_user(self.fb, m["from"]["id"])
-            messages["comments"]["data"].extend(to_add["data"])
-            if "paging" in to_add:
-                messages["comments"]["paging"] = to_add["paging"]
-            else:
-                self.update(messages)
-                return
-            print "\n"*5
-            print to_add
-            print "\n"*5
-            print messages
-        self.update(messages)
+            while time.mktime(time.strptime(messages["comments"]["data"][-1]["created_time"], "%Y-%m-%dT%H:%M:%S+0000")) > since:
+                time.sleep(0.1)
+                to_add = simple_request(messages["comments"]["paging"]["next"])
+                for m in to_add["data"]:
+                    m["author"] = get_user(self.fb, m["from"]["id"])
+                messages["comments"]["data"].extend(to_add["data"])
+                if "paging" in to_add:
+                    messages["comments"]["paging"] = to_add["paging"]
+                else:
+                    self.update(messages)
+                    return
+                print "\n"*5
+                print to_add
+                print "\n"*5
+                print messages
+            self.update(messages)
+            return
         return
 
     def analyze(self):

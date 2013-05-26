@@ -26,7 +26,7 @@ def show(key):
     thread = q.threads()
 
     #all = post + thread #status + photo + link +post #+albums
-    all = thread[:2]
+    all = thread
     s = set(all)
     all = list(s)
     all.sort(reverse=True)
