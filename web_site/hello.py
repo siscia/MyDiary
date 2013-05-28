@@ -7,12 +7,15 @@ from werkzeug import SharedDataMiddleware
 #from my_diary.extractor import Extractor
 from my_diary import extractor
 
+import prova
+
 app = Flask(__name__)
 #app.wsgi_app = SharedDataMiddleware(app.wsgi_app,{ '/static': '/statics/' } )
 
 @app.route('/')
 def hello_world():
     return render_template("skeleton.html", data=[])
+
 
 @app.route("/<key>/")
 def show(key):
@@ -23,14 +26,31 @@ def show(key):
     #link = q.links()
     
     #post = q.posts()
+    #print prova.i
     thread = q.threads()
+    
+    #try:
+    #    thread = q.threads()
+    #except:
+    #    pass
+    #finally:
+    #    print prova.i
+    #    thread = []
 
     #all = post + thread #status + photo + link +post #+albums
+
     all = thread
     s = set(all)
     all = list(s)
     all.sort(reverse=True)
     for x in all:
+        """
+        try:
+            x.analyze()
+        except:
+            pass
+        finally:
+            print "\n"*5, prova.i"""
         x.analyze()
     return render_template("skeleton.html", data=all)
 

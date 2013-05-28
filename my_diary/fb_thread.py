@@ -4,6 +4,8 @@ from datetime import datetime
 from basic_class import FacebookObject
 from util import back_dates, get_user, simple_request
 
+import prova
+
 def counter(f):
     def wrapper(*args):
         wrapper.count += 1
@@ -73,14 +75,16 @@ class Fb_Thread(FacebookObject):
 
     def get_message_new(self,  since = int(back_dates(time.time(), days = 10)), untill = int(time.time())):
         messages = self.fb.request(str(self.id))
+        prova.i += 1
         messages["author"] = get_user(self.fb, messages["from"]["id"])
         messages["to"] = [get_user(self.fb, user["id"]) for user in messages["to"]["data"]]
         if "comments" in messages:
             for m in messages["comments"]["data"]:
                 m["author"] = get_user(self.fb, m["from"]["id"])
             while time.mktime(time.strptime(messages["comments"]["data"][-1]["created_time"], "%Y-%m-%dT%H:%M:%S+0000")) > since:
-                time.sleep(0.1)
+                time.sleep(0.5)
                 to_add = simple_request(messages["comments"]["paging"]["next"])
+                prova.i += 1
                 for m in to_add["data"]:
                     m["author"] = get_user(self.fb, m["from"]["id"])
                 messages["comments"]["data"].extend(to_add["data"])
@@ -93,8 +97,12 @@ class Fb_Thread(FacebookObject):
                 print to_add
                 print "\n"*5
                 print messages
-            self.update(messages)
-            return
+                print prova.i
+        else:
+            messages["comments"] = []
+            #self.update(messages)
+            #return
+        self.update(messages)
         return
 
     def analyze(self):
